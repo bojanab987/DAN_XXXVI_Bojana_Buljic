@@ -114,7 +114,28 @@ namespace Zadatak_1
 
         static void Main(string[] args)
         {
-            
+            //Instatntiating and naming thread 1 and 2
+            Thread th1 = new Thread(() => CreateMatrix());
+            th1.Name = string.Format("T1:CreateMatrix");
+            Thread th2 = new Thread(new ThreadStart(GenerateNumbers));
+            th2.Name = string.Format("T2:GenerateNumbers");
+
+            th1.Start();
+            th2.Start();
+            th1.Join();
+            th2.Join();
+
+            //Instatntiating and naming thread 3 and 4
+            Thread th3 = new Thread(new ThreadStart(GetOddNumbersInFile));
+            th3.Name = string.Format("T3:GetOddNumbersInFile");
+            Thread th4 = new Thread(new ThreadStart(ReadFromFile));
+            th4.Name = string.Format("T4:ReadFromFile");
+
+            th3.Start();
+            th4.Start();
+            th3.Join();
+            th4.Join();
+            Console.ReadLine();
 
         }
     }
