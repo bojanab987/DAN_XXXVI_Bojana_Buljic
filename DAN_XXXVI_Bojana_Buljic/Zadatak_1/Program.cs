@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Zadatak_1
 {
@@ -67,8 +66,56 @@ namespace Zadatak_1
 
         }
 
+        /// <summary>
+        /// Method gets only odd numbers from matrix and put it in array, and after that write it in file.
+        /// </summary>
+        static void GetOddNumbersInFile()
+        {
+            //Add odd numbers from list(matrix) into array
+            oddNumbers = list.Where(i => i % 2 != 0).ToArray();
+
+            lock (fileLocker)
+            {
+                //Writing numbers from array into file
+                using (StreamWriter sw = new StreamWriter(file))
+                {
+                    for (int i = 0; i < oddNumbers.Length; i++)
+                    {
+                        sw.Write(oddNumbers[i] + " ");
+                    }
+                }
+                //sending signal to waiting thread that writing is finished
+                Monitor.Pulse(fileLocker);
+            }
+
+        }
+
+        /// <summary>
+        /// Method reading data from file after writing into file is finished,and then writes it on Console; 
+        /// </summary>
+        static void ReadFromFile()
+        {
+            lock (fileLocker)
+            {
+                Monitor.Wait(fileLocker);
+                using (StreamReader reader = File.OpenText(file))
+                {
+                    string line = " ";
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        Console.WriteLine(line);
+                    }
+                }
+
+            }
+
+        }
+
+
         static void Main(string[] args)
         {
+            
+
         }
     }
 }
